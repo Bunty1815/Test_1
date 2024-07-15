@@ -1,0 +1,59 @@
+create or replace storage integration s3_int_v1
+	  TYPE = EXTERNAL_STAGE
+	  STORAGE_PROVIDER = S3
+	  ENABLED = TRUE 
+	  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::211125570425:role/snow-pipe-access'
+	  STORAGE_ALLOWED_LOCATIONS = ('s3://s3-bucket-test-s1/csv/snowpipe/')
+	   COMMENT = 'AWS to snowflake integration' 
+
+       desc integration s3_int_v1
+
+       CREATE OR REPLACE file format MANAGE_DB.file_formats.csv_fileformat
+    type = csv
+    field_delimiter = ','
+    skip_header = 1
+    null_if = ('NULL','null')
+    empty_field_as_null = TRUE;
+
+   // Create stage object with integration object & file format object
+    
+CREATE OR REPLACE stage MANAGE_DB.external_stages.csv_folder
+    URL = 's3://s3-bucket-test-s1/csv/snowpipe/'
+    STORAGE_INTEGRATION = s3_int_v1
+    FILE_FORMAT = MANAGE_DB.file_formats.csv_fileformat
+
+list @MANAGE_DB.external_stages.csv_folder;
+
+------------create a pipe-----------
+
+CREATE OR REPLACE TABLE OUR_FIRST_DB.PUBLIC.employees (
+  id INT,
+  first_name STRING,
+  last_name STRING,
+  email STRING,
+  location string,
+  department STRING
+  )
+
+
+create or replace schema MANAGE_DB.pipes
+
+    CREATE OR REPLACE pipe MANAGE_DB.pipes.employee_pipe
+auto_ingest = TRUE
+AS
+COPY INTO OUR_FIRST_DB.PUBLIC.employees
+FROM @MANAGE_DB.external_stages.csv_folder  
+
+desc pipe MANAGE_DB.pipes.employee_pipe
+
+
+
+// Resume pipe
+ALTER PIPE MANAGE_DB.pipes.employee_pipe SET PIPE_EXECUTION_PAUSED = false
+
+// Verify pipe is running again
+SELECT SYSTEM$PIPE_STATUS('MANAGE_DB.pipes.employee_pipe') 
+
+select * from OUR_FIRST_DB.PUBLIC.employees 
+
+alter pipe MANAGE_DB.pipes.employee_pipe refresh

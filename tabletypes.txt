@@ -1,0 +1,56 @@
+CREATE TABLE regions (
+	region_id INT IDENTITY(1,1) PRIMARY KEY,
+	region_name VARCHAR (25) DEFAULT NULL
+);
+
+INSERT INTO regions(region_id,region_name) VALUES (1,'Europe');
+INSERT INTO regions(region_id,region_name) VALUES (2,'Americas');
+INSERT INTO regions(region_id,region_name) VALUES (3,'Asia');
+INSERT INTO regions(region_id,region_name) VALUES (4,'Middle East and Africa');
+
+select * from regions;
+
+
+delete from regions where region_id in (3,4)
+
+drop table regions;
+
+
+
+
+CREATE transient TABLE regions1 (
+	region_id INT IDENTITY(1,1) PRIMARY KEY,
+	region_name VARCHAR (25) DEFAULT NULL
+);
+
+INSERT INTO regions1(region_id,region_name) VALUES (1,'Europe');
+INSERT INTO regions1(region_id,region_name) VALUES (2,'Americas');
+INSERT INTO regions1(region_id,region_name) VALUES (3,'Asia');
+INSERT INTO regions1(region_id,region_name) VALUES (4,'Middle East and Africa');
+
+delete from regions1 where region_id in (3,4)
+
+select * from regions1
+
+drop table regions1
+
+select * from COPY_DB.public.regions1 before (statement => '01b57ad8-0001-26f6-0004-d0a200018272')
+SELECT * FROM OUR_FIRST_DB.public.test before (statement => '01b56c63-0001-26ac-0004-d0a2000167a2')
+
+desc table regions1;
+
+CREATE temporary TABLE regions2 (
+	region_id INT IDENTITY(1,1) PRIMARY KEY,
+	region_name VARCHAR (25) DEFAULT NULL
+);
+
+INSERT INTO regions2(region_id,region_name) VALUES (1,'Europe');
+INSERT INTO regions2(region_id,region_name) VALUES (2,'Americas');
+INSERT INTO regions2(region_id,region_name) VALUES (3,'Asia');
+INSERT INTO regions2(region_id,region_name) VALUES (4,'Middle East and Africa');
+
+delete from regions2 where region_id in (3,4)
+
+select * from regions2
+
+show tables;

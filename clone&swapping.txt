@@ -1,0 +1,101 @@
+Cloning 
+
+
+
+    SELECT * FROM OUR_FIRST_DB.PUBLIC.ORDERS   
+
+    CREATE TABLE OUR_FIRST_DB.PUBLIC.ORDERS_CLONE 
+    CLONE  OUR_FIRST_DB.PUBLIC.ORDERS   
+
+//Validate the Data 
+SELECT * FROM OUR_FIRST_DB.PUBLIC.ORDERS_CLONE   
+
+update  OUR_FIRST_DB.PUBLIC.ORDERS 
+set category=null
+
+show tables in OUR_FIRST_DB.PUBLIC
+
+create or replace table orders_1 as
+( 
+select * from OUR_FIRST_DB.PUBLIC.ORDERS_CLONE
+
+)
+
+select * from orders_1
+
+CREATE OR REPLACE TEMPORARY TABLE  OUR_FIRST_DB.PUBLIC.TEMP_TABLE (id INT)
+
+select * from OUR_FIRST_DB.PUBLIC.TEMP_TABLE
+
+create or replace table OUR_FIRST_DB.PUBLIC.TEMP_TABLE_copy
+clone OUR_FIRST_DB.PUBLIC.TEMP_TABLE
+
+create or replace temporary table OUR_FIRST_DB.PUBLIC.TEMP_TABLE_copy
+clone OUR_FIRST_DB.PUBLIC.TEMP_TABLE
+
+create or replace schema OUR_FIRST_DB.PUBLIC
+
+drop schema OUR_FIRST_DB.PUBLIC_1
+
+create or replace schema OUR_FIRST_DB.PUBLIC_1
+clone OUR_FIRST_DB.PUBLIC
+
+CREATE TRANSIENT SCHEMA OUR_FIRST_DB.COPIED_SCHEMA
+CLONE OUR_FIRST_DB.PUBLIC;
+
+delete OUR_FIRST_DB.PUBLIC
+delete OUR_FIRST_DB.COPIED_SCHEMA
+
+drop schema OUR_FIRST_DB.COPIED_SCHEMA
+undrop schema OUR_FIRST_DB.COPIED_SCHEMA
+
+
+
+SELECT * FROM OUR_FIRST_DB.COPIED_SCHEMA.ORDERS
+
+CREATE TRANSIENT SCHEMA OUR_FIRST_DB.EXTERNAL_STAGES_COPIED
+CLONE MANAGE_DB.EXTERNAL_STAGES;
+
+create or replace schema OUR_FIRST_DB.PUBLIC
+
+undrop schema OUR_FIRST_DB.PUBLIC
+
+
+----------swapping-----------
+CREATE OR REPLACE DATABASE our_first_db
+create or replace schema our_first_db.copied_schema
+
+
+create or replace table our_first_db.copied_schema.orders as
+(
+SELECT * FROM OUR_FIRST_DB.PUBLIC.orders 
+)
+
+select * from our_first_db.copied_schema.orders 
+
+SELECT * FROM OUR_FIRST_DB.PUBLIC.orders  --1500
+
+
+CREATE or replace SCHEMA our_first_db.copied_schema;
+
+CREATE OR REPLACE TABLE our_first_db.copied_schema.orders 
+CLONE OUR_FIRST_DB.PUBLIC.orders
+
+
+
+  DELETE FROM our_first_db.copied_schema.orders WHERE amount < 100
+
+SELECT * FROM our_first_db.copied_schema.orders --820 
+
+
+ALTER TABLE our_first_db.copied_schema.orders
+SWAP WITH OUR_FIRST_DB.PUBLIC.orders
+
+
+//VERIFY RESULTS
+
+
+SELECT * FROM our_first_db.copied_schema.orders
+SELECT * FROM OUR_FIRST_DB.PUBLIC.orders 
+
+
